@@ -13,36 +13,47 @@ c.fillRect(0, 0, canvas.width, canvas.height);
 const gravity = 0.7;
 
 class Sprite {
-  constructor({ position, velocity, color = "red" }) {
+  constructor({ position, velocity, color = "red", offset }) {
     // basically a function within the class that will be fired any time we create an object in this class, using brackets so that we can pass the arguments of the functions as objects letting them being called like and/or, no need to keep track of what comes first
     this.position = position; // this is basically like self in python
     this.velocity = velocity;
-    this.width = 50
+    this.width = 50;
     this.height = 150;
     this.lastKey;
     this.attackBox = {
-      position: this.position,
+      position: {
+        x: this.position.x,
+        y: this.position.y,
+      },
+      offset,
       width: 100,
       height: 50,
     };
     this.color = color;
+    this.isAttacking;
   }
   draw() {
     c.fillStyle = this.color; // Filling the rectangle with the color red, and because it is inside draw is gonna select the c object
     c.fillRect(this.position.x, this.position.y, this.width, this.height); // Creating a new sprite with fillRect, so... a rectangle. Associated with this.position
 
     //attack box
-    c.fillStyle = "green";
-    c.fillRect(
-      this.attackBox.position.x,
-      this.attackBox.position.y,
-      this.attackBox.width,
-      this.attackBox.height
-    );
+    if (this.isAttacking) {
+      c.fillStyle = "green";
+      c.fillRect(
+        this.attackBox.position.x,
+        this.attackBox.position.y,
+        this.attackBox.width,
+        this.attackBox.height
+      );
+    }
   }
+
   update() {
-    // function to incresse what's in it each frame
+    // function to update each frame
     this.draw();
+    this.attackBox.position.x = this.position.x + this.attackBox.offset.x;
+    this.attackBox.position.y = this.position.y;
+
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
 
@@ -51,6 +62,12 @@ class Sprite {
     } else {
       this.velocity.y += gravity;
     }
+  }
+  attack() {
+    this.isAttacking = true;
+    setTimeout(() => {
+      this.isAttacking = false;
+    }, 100);
   }
 }
 
@@ -64,7 +81,11 @@ const player = new Sprite({
   velocity: {
     // here velocity has two variables so that the player can move left, right, up and down
     x: 0,
-    y: 10,
+    y: 0,
+  },
+  offset: {
+    x: 0,
+    y: 0,
   },
 });
 
@@ -82,6 +103,10 @@ const enemy = new Sprite({
     y: 0,
   },
   color: "blue",
+  offset: {
+    x: -50,
+    y: 0,
+  },
 });
 
 enemy.draw();
@@ -109,6 +134,18 @@ const keys = {
   },
 };
 
+function reactangularCollision({ rectangle1, rectangle2 }) {
+  return (
+    rectangle1.attackBox.position.x + player.attackBox.width >=
+      rectangle2.position.x &&
+    rectangle1.attackBox.position.x <=
+      rectangle2.position.x + rectangle2.width &&
+    rectangle1.attackBox.position.y + player.attackBox.height >=
+      rectangle2.position.y &&
+    rectangle1.attackBox.position.y <= rectangle2.position.y + rectangle2.height
+  );
+}
+
 function animate() {
   // infinite loop that keep animating frame by frame
   window.requestAnimationFrame(animate);
@@ -135,19 +172,30 @@ function animate() {
 
   //detect for colision
   if (
-    player.attackBox.position.x + player.attackBox.width >= enemy.position.x &&
-    player.attackBox.position.x <= enemy.position.x + enemy.width &&
-    player.attackBox.position.y + player.attackBox.height >= enemy.position.y &&
-    player.attackBox.position.y <= enemy.position.y + enemy.height
+    reactangularCollision({
+      rectangle1: player,
+      rectangle2: enemy,
+    }) &&
+    player.isAttacking
   ) {
+    player.isAttacking = false;
     console.log("go");
+  }
+  if (
+    reactangularCollision({
+      rectangle1: enemy,
+      rectangle2: player,
+    }) &&
+    enemy.isAttacking
+  ) {
+    enemy.isAttacking = false;
+    console.log("enemy attack successful");
   }
 }
 
 animate();
 
 window.addEventListener("keydown", (event) => {
-  console.log(event.key);
   switch (event.key) {
     case "d":
       keys.d.pressed = true;
@@ -160,6 +208,10 @@ window.addEventListener("keydown", (event) => {
     case "w":
       player.velocity.y = -20;
       break;
+    case " ":
+      player.attack();
+      break;
+
     // enemy keys
     case "ArrowRight":
       keys.ArrowRight.pressed = true;
@@ -172,8 +224,10 @@ window.addEventListener("keydown", (event) => {
     case "ArrowUp":
       enemy.velocity.y = -20;
       break;
+    case "ArrowDown":
+      enemy.isAttacking = true;
+      break;
   }
-  console.log(event.key);
 });
 
 window.addEventListener("keyup", (event) => {
@@ -200,5 +254,4 @@ window.addEventListener("keyup", (event) => {
       keys.ArrowUp.pressed = false;
       break;
   }
-  console.log(event.key);
 });
