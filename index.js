@@ -10,7 +10,7 @@ c.fillRect(0, 0, canvas.width, canvas.height);
 
 // Creating rectangles as enemy's
 
-const gravity = 0.2;
+const gravity = 0.7;
 
 class Sprite {
   constructor({ position, velocity }) {
@@ -18,6 +18,7 @@ class Sprite {
     this.position = position; // this is basically like self in python
     this.velocity = velocity;
     this.height = 150;
+    this.lastKey
   }
   draw() {
     c.fillStyle = "red"; // Filling the rectangle with the color red, and because it is inside draw is gonna select the c object
@@ -70,6 +71,27 @@ enemy.draw();
 
 console.log(player);
 
+const keys = {
+    a: {
+      pressed: false
+    },
+    d: {
+      pressed: false
+    },
+    w: {
+      pressed: false
+    },
+    ArrowRight: {
+      pressed: false
+    },
+    ArrowLeft: {
+      pressed: false
+    },
+    ArrowUp: {
+      pressed: false
+    }
+}
+
 function animate() {
   // infinite loop that keep animating frame by frame
   window.requestAnimationFrame(animate);
@@ -77,24 +99,79 @@ function animate() {
   c.fillRect(0, 0, canvas.width, canvas.height);
   player.update();
   enemy.update();
+
+  player.velocity.x = 0 // to make sure the player stop moving when keys lifted up
+  enemy.velocity.x = 0 
+
+  // handles player movement
+  if (keys.a.pressed && player.lastKey == 'a') {
+      player.velocity.x = -5
+  } else if (keys.d.pressed && player.lastKey == 'd') {
+    player.velocity.x = 5
+  }
+  // handles enemy movement
+  if (keys.ArrowLeft.pressed && enemy.lastKey == 'ArrowLeft') {
+    enemy.velocity.x = -5
+} else if (keys.ArrowRight.pressed && enemy.lastKey == 'ArrowRight') {
+  enemy.velocity.x = 5
+}
 }
 
 animate();
 
 window.addEventListener('keydown', (event) => {
-    switch (event.key) {
+    console.log(event.key)
+    switch (event.key) { 
         case 'd':
-        player.velocity.x = 1 // moving one pixel for every frame with loop over
+        keys.d.pressed = true
+        player.lastKey = 'd'
         break
-    }
+        case 'a':
+        keys.a.pressed = true
+        player.lastKey = 'a'
+        break
+        case 'w':
+        player.velocity.y = -20
+        break
+        // enemy keys
+        case 'ArrowRight':
+        keys.ArrowRight.pressed = true
+        enemy.lastKey = 'ArrowRight'
+        break
+        case 'ArrowLeft':
+        keys.ArrowLeft.pressed = true
+        enemy.lastKey = 'ArrowLeft'
+        break
+        case 'ArrowUp':
+        enemy.velocity.y = -20
+        break
+    } 
     console.log(event.key)
 })
 
 window.addEventListener('keyup', (event) => {
     switch (event.key) {
-        case 'd':
-        player.velocity.x = 0 
-        break
+      case 'd':
+      keys.d.pressed = false
+      break
+      case 'a':
+      keys.a.pressed = false
+      break
+      case 'w':
+      keys.w.pressed = false
+      break
     }
+    // enemy keys
+    switch (event.key) {
+      case 'ArrowRight':
+      keys.ArrowRight.pressed = false
+      break
+      case 'ArrowLeft':
+      keys.ArrowLeft.pressed = false
+      break
+      case 'ArrowUp':
+      keys.ArrowUp.pressed = false
+      break
+  }
     console.log(event.key)
 })
