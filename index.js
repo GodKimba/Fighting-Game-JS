@@ -31,6 +31,7 @@ class Sprite {
     };
     this.color = color;
     this.isAttacking;
+    this.health = 100;
   }
   draw() {
     c.fillStyle = this.color; // Filling the rectangle with the color red, and because it is inside draw is gonna select the c object
@@ -179,7 +180,8 @@ function animate() {
     player.isAttacking
   ) {
     player.isAttacking = false;
-    console.log("go");
+    enemy.health -= 20
+    document.querySelector('#enemyHealth').style.width = enemy.health + '%';
   }
   if (
     reactangularCollision({
@@ -189,7 +191,8 @@ function animate() {
     enemy.isAttacking
   ) {
     enemy.isAttacking = false;
-    console.log("enemy attack successful");
+    player.health -= 20;
+    document.querySelector('#playerHealth').style.width = player.health + '%';
   }
 }
 
