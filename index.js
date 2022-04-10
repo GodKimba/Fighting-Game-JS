@@ -56,6 +56,11 @@ const player = new Fighter({
       framesMax: 8,
       run: new Image(),
     },
+    jump: {
+      imageSrc: "./img/samuraiMack/Jump.png",
+      framesMax: 2,
+      run: new Image(),
+    },
   },
 });
 
@@ -127,6 +132,12 @@ function animate() {
     player.velocity.x = 5;
     player.image = player.sprites.run.image;
   }
+
+  if (player.velocity.y < 0) {
+    player.image = player.sprites.jump.image
+    player.framesMax = players.sprites.jump.framesMax
+  }
+
   // handles enemy movement
   if (keys.ArrowLeft.pressed && enemy.lastKey == "ArrowLeft") {
     enemy.velocity.x = -5;
