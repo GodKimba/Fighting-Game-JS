@@ -44,6 +44,8 @@ const player = new Fighter({
   },
   imageSrc: "./img/samuraiMack/Idle.png",
   framesMax: 8,
+  scale: 2.5,
+  offset: { x: 215, y: 157 },
 });
 
 player.draw();
@@ -100,7 +102,7 @@ function animate() {
   background.update();
   shop.update();
   player.update();
-  enemy.update();
+  // enemy.update();
 
   player.velocity.x = 0; // to make sure the player stop moving when keys lifted up
   enemy.velocity.x = 0;
