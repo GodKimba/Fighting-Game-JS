@@ -68,6 +68,14 @@ const player = new Fighter({
       framesMax: 6,
     },
   },
+  attackBox: {
+    offset: {
+      x: 0,
+      y: 0,
+    },
+    width: 100,
+    height: 80,
+  },
 });
 
 // Enemy Sprite
@@ -113,6 +121,14 @@ const enemy = new Fighter({
       imageSrc: "./img/Kenji/Attack1.png",
       framesMax: 4,
     },
+  },
+  attackBox: {
+    offset: {
+      x: 0,
+      y: 0,
+    },
+    width: 100,
+    height: 80,
   },
 });
 
