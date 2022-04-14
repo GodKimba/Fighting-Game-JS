@@ -11,7 +11,7 @@ function reactangularCollision({ rectangle1, rectangle2 }) {
 }
 
 function determineWinner({ player, enemy, timerId }) {
-  clearTimeout(timerId)
+  clearTimeout(timerId);
   document.querySelector("#displayText").style.display = "flex";
   if (player.health === enemy.health) {
     document.querySelector("#displayText").innerHTML = "Tie";
@@ -23,7 +23,7 @@ function determineWinner({ player, enemy, timerId }) {
 }
 
 let timer = 60;
-let timerId
+let timerId;
 function decreaseTimer() {
   if (timer > 0) {
     timerId = setTimeout(decreaseTimer, 1000);
@@ -32,6 +32,6 @@ function decreaseTimer() {
   }
 
   if (timer === 0) {
-    determineWinner({ player, enemy });
+    determineWinner({ player, enemy, timerId });
   }
 }
