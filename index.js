@@ -70,11 +70,11 @@ const player = new Fighter({
   },
   attackBox: {
     offset: {
-      x: 0,
-      y: 0,
+      x: 100,
+      y: 50,
     },
-    width: 100,
-    height: 80,
+    width: 160,
+    height: 50,
   },
 });
 
@@ -110,7 +110,7 @@ const enemy = new Fighter({
       framesMax: 8,
     },
     jump: {
-      imageSrc: "./img/Kenji/Jump.png",
+      imageSrc: "./img/Kenji/Jump.png",   
       framesMax: 2,
     },
     fall: {
@@ -124,11 +124,11 @@ const enemy = new Fighter({
   },
   attackBox: {
     offset: {
-      x: 0,
-      y: 0,
+      x: -175,
+      y: 50,
     },
-    width: 100,
-    height: 80,
+    width: 175,
+    height: 50,
   },
 });
 
@@ -213,22 +213,35 @@ function animate() {
       rectangle1: player,
       rectangle2: enemy,
     }) &&
-    player.isAttacking
+    player.isAttacking &&
+    player.framesCurrent === 4
   ) {
     player.isAttacking = false;
     enemy.health -= 20;
     document.querySelector("#enemyHealth").style.width = enemy.health + "%";
   }
+
+  // if player misses
+  if (player.isAttacking && player.framesCurrent === 4) {
+    player.isAttacking = false;
+  }
+
   if (
     reactangularCollision({
       rectangle1: enemy,
       rectangle2: player,
     }) &&
-    enemy.isAttacking
+    enemy.isAttacking &&
+    enemy.framesCurrent === 2
   ) {
     enemy.isAttacking = false;
     player.health -= 20;
     document.querySelector("#playerHealth").style.width = player.health + "%";
+  }
+
+  // if player misses
+  if (enemy.isAttacking && enemy.framesCurrent === 2) {
+    enemy.isAttacking = false;
   }
 
   // end game based on health
