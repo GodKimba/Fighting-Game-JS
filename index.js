@@ -67,6 +67,10 @@ const player = new Fighter({
       imageSrc: "./img/samuraiMack/Attack1.png",
       framesMax: 6,
     },
+    takeHit: {
+      imageSrc: "./img/samuraiMack/Take Hit - white silhouette.png",
+      framesMax: 4,
+    },
   },
   attackBox: {
     offset: {
@@ -102,24 +106,28 @@ const enemy = new Fighter({
   },
   sprites: {
     idle: {
-      imageSrc: "./img/Kenji/Idle.png",
+      imageSrc: "./img/kenji/Idle.png",
       framesMax: 4,
     },
     run: {
-      imageSrc: "./img/Kenji/Run.png",
+      imageSrc: "./img/kenji/Run.png",
       framesMax: 8,
     },
     jump: {
-      imageSrc: "./img/Kenji/Jump.png",   
+      imageSrc: "./img/kenji/Jump.png",
       framesMax: 2,
     },
     fall: {
-      imageSrc: "./img/Kenji/Fall.png",
+      imageSrc: "./img/kenji/Fall.png",
       framesMax: 2,
     },
     attack1: {
-      imageSrc: "./img/Kenji/Attack1.png",
+      imageSrc: "./img/kenji/Attack1.png",
       framesMax: 4,
+    },
+    takeHit: {
+      imageSrc: "./img/kenji/Take hit.png",
+      framesMax: 3,
     },
   },
   attackBox: {
@@ -207,7 +215,7 @@ function animate() {
     enemy.switchSprite("fall");
   }
 
-  //detect for colision
+  //detect for colision & enemy hit
   if (
     reactangularCollision({
       rectangle1: player,
@@ -216,8 +224,9 @@ function animate() {
     player.isAttacking &&
     player.framesCurrent === 4
   ) {
+    enemy.takeHit()
     player.isAttacking = false;
-    enemy.health -= 20;
+    
     document.querySelector("#enemyHealth").style.width = enemy.health + "%";
   }
 
@@ -226,6 +235,7 @@ function animate() {
     player.isAttacking = false;
   }
 
+  // this is where player gets hit
   if (
     reactangularCollision({
       rectangle1: enemy,
@@ -234,8 +244,8 @@ function animate() {
     enemy.isAttacking &&
     enemy.framesCurrent === 2
   ) {
+    player.takeHit()
     enemy.isAttacking = false;
-    player.health -= 20;
     document.querySelector("#playerHealth").style.width = player.health + "%";
   }
 
